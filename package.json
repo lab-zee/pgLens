@@ -1,8 +1,8 @@
 {
   "name": "pglens",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
-  "description": "Connect to PostgreSQL and instantly visualize your database — tables, schemas, relationships, and data.",
+  "description": "Connect to PostgreSQL or SQLite and instantly visualize your database — tables, schemas, relationships, and data.",
   "scripts": {
     "dev": "pnpm --parallel -r run dev",
     "dev:server": "pnpm --filter @pglens/server run dev",
@@ -18,7 +18,7 @@
     "clean": "pnpm -r run clean",
     "start": "pnpm build && node packages/server/dist/index.js"
   },
-  "keywords": ["postgres", "database", "visualization", "schema", "pglens"],
+  "keywords": ["postgres", "sqlite", "database", "visualization", "schema", "pglens"],
   "license": "MIT",
   "author": "davidinwald",
   "repository": {
@@ -26,10 +26,10 @@
     "url": "https://github.com/davidinwald/pglens"
   },
   "engines": {
-    "node": ">=20.0.0",
+    "node": ">=24.0.0",
     "pnpm": ">=9.0.0"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["esbuild"]
+    "onlyBuiltDependencies": ["esbuild", "better-sqlite3"]
   }
 }

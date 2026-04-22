@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-04-21
+
+### Added
+
+- SQLite support — connect with a file path (`/path/to/db.sqlite`), `sqlite:` prefix, or `:memory:`
+- Database adapter abstraction (`DatabaseAdapter` interface) for pluggable database backends
+- `PostgresAdapter` and `SqliteAdapter` implementations with full feature parity
+- SQLite type mapping to PostgreSQL-equivalent types for consistent client rendering
+- Connection string auto-detection: SQLite vs PostgreSQL based on format
+- SQLite introspection via `PRAGMA table_info`, `foreign_key_list`, `index_list`, and `sqlite_master`
+- Case-insensitive search for SQLite using `LIKE ... COLLATE NOCASE`
+- 28 new server tests (11 for PostgresAdapter, 17 for SqliteAdapter with real DB)
+
+### Changed
+
+- Connection manager now stores `DatabaseAdapter` instances instead of raw `pg.Pool` objects
+- Schema introspector and data query modules accept adapters instead of pools
+- Routes use `getAdapter()` instead of `getPool()`
+- Connection form updated: tagline, placeholder, and copy reflect multi-DB support
+- Saved connections handle SQLite file paths and `:memory:` labels
+- Minimum Node.js version bumped to >= 24.0.0
+
 ## [0.1.0] - 2026-04-02
 
 ### Added

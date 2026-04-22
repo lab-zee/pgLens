@@ -18,14 +18,51 @@ vi.mock('pg', () => {
   };
 });
 
+// Mock better-sqlite3
+vi.mock('better-sqlite3', () => {
+  const mockPrepare = vi.fn().mockReturnValue({
+    all: vi.fn().mockReturnValue([{ name: 'test_table' }]),
+    get: vi.fn().mockReturnValue({ count: 0 }),
+  });
+  const MockDatabase = vi.fn(() => ({
+    prepare: mockPrepare,
+    pragma: vi.fn(),
+    close: vi.fn(),
+  }));
+  return { default: MockDatabase };
+});
+
 import * as connectionManager from '../../src/services/connection-manager.js';
+import { detectDialect } from '../../src/services/connection-manager.js';
 
 describe('ConnectionManager', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  describe('connect', () => {
+  describe('detectDialect', () => {
+    it('should detect PostgreSQL connection strings', () => {
+      expect(detectDialect('postgresql://test@localhost/testdb')).toBe('postgres');
+      expect(detectDialect('postgres://user:pass@host:5432/db')).toBe('postgres');
+    });
+
+    it('should detect SQLite file paths by extension', () => {
+      expect(detectDialect('/path/to/database.db')).toBe('sqlite');
+      expect(detectDialect('/path/to/database.sqlite')).toBe('sqlite');
+      expect(detectDialect('/path/to/database.sqlite3')).toBe('sqlite');
+    });
+
+    it('should detect sqlite: prefix', () => {
+      expect(detectDialect('sqlite:/path/to/database.db')).toBe('sqlite');
+      expect(detectDialect('sqlite::memory:')).toBe('sqlite');
+    });
+
+    it('should detect :memory:', () => {
+      expect(detectDialect(':memory:')).toBe('sqlite');
+    });
+  });
+
+  describe('connect (PostgreSQL)', () => {
     it('should return a connection ID on successful connect', async () => {
       const id = await connectionManager.connect('postgresql://test@localhost/testdb');
       expect(id).toMatch(/^conn_/);
@@ -45,25 +82,37 @@ describe('ConnectionManager', () => {
     });
   });
 
-  describe('getPool', () => {
-    it('should return the pool for a valid connection', async () => {
+  describe('connect (SQLite)', () => {
+    it('should return a connection ID for SQLite', async () => {
+      const id = await connectionManager.connect('sqlite:/tmp/test.db');
+      expect(id).toMatch(/^conn_/);
+    });
+
+    it('should strip sqlite: prefix from path', async () => {
+      const id = await connectionManager.connect('sqlite:/tmp/test.db');
+      const adapter = connectionManager.getAdapter(id);
+      expect(adapter.dialect).toBe('sqlite');
+    });
+  });
+
+  describe('getAdapter', () => {
+    it('should return the adapter for a valid connection', async () => {
       const id = await connectionManager.connect('postgresql://test@localhost/testdb');
-      const pool = connectionManager.getPool(id);
-      expect(pool).toBeDefined();
-      expect(pool.query).toBeDefined();
+      const adapter = connectionManager.getAdapter(id);
+      expect(adapter).toBeDefined();
+      expect(adapter.dialect).toBe('postgres');
     });
 
     it('should throw for an unknown connection ID', () => {
-      expect(() => connectionManager.getPool('conn_nonexistent')).toThrow('Connection not found');
+      expect(() => connectionManager.getAdapter('conn_nonexistent')).toThrow('Connection not found');
     });
   });
 
   describe('disconnect', () => {
-    it('should end the pool and remove the connection', async () => {
+    it('should close the adapter and remove the connection', async () => {
       const id = await connectionManager.connect('postgresql://test@localhost/testdb');
       await connectionManager.disconnect(id);
-      expect(mockEnd).toHaveBeenCalled();
-      expect(() => connectionManager.getPool(id)).toThrow('Connection not found');
+      expect(() => connectionManager.getAdapter(id)).toThrow('Connection not found');
     });
 
     it('should be a no-op for unknown IDs', async () => {

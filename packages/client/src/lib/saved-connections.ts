@@ -38,13 +38,35 @@ export function removeSavedConnection(connectionString: string): void {
 }
 
 export function maskConnectionString(connectionString: string): string {
+  if (isSqliteConnection(connectionString)) {
+    return connectionString;
+  }
   // postgresql://user:password@host:port/dbname → postgresql://user:****@host:port/dbname
   return connectionString.replace(/:([^/:@]+)@/, ':****@');
 }
 
+function isSqliteConnection(connectionString: string): boolean {
+  const s = connectionString.trim();
+  return (
+    s.startsWith('sqlite:') ||
+    /\.(db|sqlite|sqlite3)$/i.test(s) ||
+    s === ':memory:'
+  );
+}
+
 function parseLabel(connectionString: string): string {
+  if (isSqliteConnection(connectionString)) {
+    const path = connectionString.startsWith('sqlite:')
+      ? connectionString.slice('sqlite:'.length)
+      : connectionString;
+    if (path === ':memory:') return 'SQLite (in-memory)';
+    // Show just the filename
+    const parts = path.split('/');
+    return `SQLite: ${parts[parts.length - 1]}`;
+  }
+
   try {
-    // Handle both URL-style and key=value style
+    // Handle URL-style PostgreSQL connection strings
     const url = new URL(connectionString);
     const db = url.pathname.replace(/^\//, '') || 'default';
     const host = url.hostname || 'localhost';

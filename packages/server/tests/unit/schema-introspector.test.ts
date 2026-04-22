@@ -1,106 +1,82 @@
 import { describe, it, expect, vi } from 'vitest';
 import { introspectSchema, introspectTable } from '../../src/services/schema-introspector.js';
+import type { DatabaseAdapter } from '../../src/services/database-adapter.js';
 
-function createMockPool(queryResponses: Record<string, { rows: unknown[] }>) {
+function createMockAdapter(overrides: Partial<DatabaseAdapter> = {}): DatabaseAdapter {
   return {
-    query: vi.fn((sql: string, _params?: unknown[]) => {
-      for (const [key, response] of Object.entries(queryResponses)) {
-        if (sql.includes(key)) {
-          return Promise.resolve(response);
-        }
-      }
-      return Promise.resolve({ rows: [] });
-    }),
-  } as unknown as import('pg').Pool;
+    dialect: 'postgres',
+    supportsSchemas: true,
+    getTables: vi.fn().mockResolvedValue(['users', 'posts']),
+    getColumns: vi.fn().mockResolvedValue([
+      {
+        name: 'id',
+        dataType: 'integer',
+        udtName: 'int4',
+        isNullable: false,
+        columnDefault: "nextval('users_id_seq')",
+        isPrimaryKey: true,
+        characterMaxLength: null,
+        numericPrecision: 32,
+      },
+    ]),
+    getForeignKeys: vi.fn().mockResolvedValue([]),
+    getIndexes: vi.fn().mockResolvedValue([
+      { name: 'users_pkey', isUnique: true, columns: ['id'] },
+    ]),
+    getRowCount: vi.fn().mockResolvedValue(5),
+    tableExists: vi.fn().mockResolvedValue(true),
+    queryTableData: vi.fn().mockResolvedValue({ rows: [], totalRows: 0, page: 1, pageSize: 50, totalPages: 0 }),
+    close: vi.fn().mockResolvedValue(undefined),
+    ...overrides,
+  };
 }
 
 describe('SchemaIntrospector', () => {
   describe('introspectSchema', () => {
     it('should return all tables with metadata', async () => {
-      const pool = createMockPool({
-        'information_schema.tables': {
-          rows: [{ table_name: 'users' }, { table_name: 'posts' }],
-        },
-        'information_schema.columns': {
-          rows: [
-            {
-              column_name: 'id',
-              data_type: 'integer',
-              udt_name: 'int4',
-              is_nullable: 'NO',
-              column_default: "nextval('users_id_seq')",
-              character_maximum_length: null,
-              numeric_precision: 32,
-            },
-          ],
-        },
-        'table_constraints': {
-          rows: [{ column_name: 'id' }],
-        },
-        'constraint_column_usage': {
-          rows: [],
-        },
-        pg_indexes: {
-          rows: [{ indexname: 'users_pkey', indexdef: 'CREATE UNIQUE INDEX users_pkey ON users USING btree (id)' }],
-        },
-        reltuples: {
-          rows: [{ reltuples: 5 }],
-        },
-        'count(*)': {
-          rows: [{ count: '5' }],
-        },
-      });
-
-      const schema = await introspectSchema(pool);
+      const adapter = createMockAdapter();
+      const schema = await introspectSchema(adapter);
       expect(schema.tables).toHaveLength(2);
       expect(schema.timestamp).toBeDefined();
       expect(schema.tables[0].name).toBe('users');
+    });
+
+    it('should call getTables with the given schema name', async () => {
+      const adapter = createMockAdapter();
+      await introspectSchema(adapter, 'custom_schema');
+      expect(adapter.getTables).toHaveBeenCalledWith('custom_schema');
     });
   });
 
   describe('introspectTable', () => {
     it('should return column information', async () => {
-      const pool = createMockPool({
-        'information_schema.columns': {
-          rows: [
-            {
-              column_name: 'id',
-              data_type: 'integer',
-              udt_name: 'int4',
-              is_nullable: 'NO',
-              column_default: null,
-              character_maximum_length: null,
-              numeric_precision: 32,
-            },
-            {
-              column_name: 'name',
-              data_type: 'character varying',
-              udt_name: 'varchar',
-              is_nullable: 'YES',
-              column_default: null,
-              character_maximum_length: 255,
-              numeric_precision: null,
-            },
-          ],
-        },
-        'table_constraints': {
-          rows: [{ column_name: 'id' }],
-        },
-        'constraint_column_usage': {
-          rows: [],
-        },
-        pg_indexes: {
-          rows: [],
-        },
-        reltuples: {
-          rows: [{ reltuples: 42 }],
-        },
-        'count(*)': {
-          rows: [{ count: '42' }],
-        },
+      const adapter = createMockAdapter({
+        getColumns: vi.fn().mockResolvedValue([
+          {
+            name: 'id',
+            dataType: 'integer',
+            udtName: 'int4',
+            isNullable: false,
+            columnDefault: null,
+            isPrimaryKey: true,
+            characterMaxLength: null,
+            numericPrecision: 32,
+          },
+          {
+            name: 'name',
+            dataType: 'character varying',
+            udtName: 'varchar',
+            isNullable: true,
+            columnDefault: null,
+            isPrimaryKey: false,
+            characterMaxLength: 255,
+            numericPrecision: null,
+          },
+        ]),
+        getRowCount: vi.fn().mockResolvedValue(42),
       });
 
-      const table = await introspectTable(pool, 'public', 'users');
+      const table = await introspectTable(adapter, 'public', 'users');
       expect(table.name).toBe('users');
       expect(table.columns).toHaveLength(2);
       expect(table.columns[0].name).toBe('id');
@@ -111,47 +87,34 @@ describe('SchemaIntrospector', () => {
     });
 
     it('should extract foreign keys', async () => {
-      const pool = createMockPool({
-        'information_schema.columns': { rows: [] },
-        'PRIMARY KEY': { rows: [] },
-        'FOREIGN KEY': {
-          rows: [
-            {
-              constraint_name: 'fk_user',
-              column_name: 'user_id',
-              referenced_table: 'users',
-              referenced_column: 'id',
-            },
-          ],
-        },
-        pg_indexes: { rows: [] },
-        reltuples: { rows: [{ reltuples: 0 }] },
-        'count(*)': { rows: [{ count: '0' }] },
+      const adapter = createMockAdapter({
+        getColumns: vi.fn().mockResolvedValue([]),
+        getForeignKeys: vi.fn().mockResolvedValue([
+          {
+            constraintName: 'fk_user',
+            columnName: 'user_id',
+            referencedTable: 'users',
+            referencedColumn: 'id',
+          },
+        ]),
+        getRowCount: vi.fn().mockResolvedValue(0),
       });
 
-      const table = await introspectTable(pool, 'public', 'posts');
+      const table = await introspectTable(adapter, 'public', 'posts');
       expect(table.foreignKeys).toHaveLength(1);
       expect(table.foreignKeys[0].referencedTable).toBe('users');
     });
 
-    it('should parse index definitions', async () => {
-      const pool = createMockPool({
-        'information_schema.columns': { rows: [] },
-        'table_constraints': { rows: [] },
-        'constraint_column_usage': { rows: [] },
-        pg_indexes: {
-          rows: [
-            {
-              indexname: 'idx_email',
-              indexdef: 'CREATE UNIQUE INDEX idx_email ON users USING btree (email)',
-            },
-          ],
-        },
-        reltuples: { rows: [{ reltuples: 0 }] },
-        'count(*)': { rows: [{ count: '0' }] },
+    it('should include indexes', async () => {
+      const adapter = createMockAdapter({
+        getColumns: vi.fn().mockResolvedValue([]),
+        getIndexes: vi.fn().mockResolvedValue([
+          { name: 'idx_email', isUnique: true, columns: ['email'] },
+        ]),
+        getRowCount: vi.fn().mockResolvedValue(0),
       });
 
-      const table = await introspectTable(pool, 'public', 'users');
+      const table = await introspectTable(adapter, 'public', 'users');
       expect(table.indexes).toHaveLength(1);
       expect(table.indexes[0].isUnique).toBe(true);
       expect(table.indexes[0].columns).toContain('email');

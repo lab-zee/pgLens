@@ -46,10 +46,10 @@ export function ConnectionForm({ onConnect, isConnecting, error }: ConnectionFor
           <div className="space-y-3 text-center">
             <h1 className="text-4xl font-bold tracking-tight">pgLens</h1>
             <p className="text-lg text-muted-foreground">
-              See your Postgres clearly.
+              See your data clearly.
             </p>
             <p className="text-sm text-muted-foreground max-w-md mx-auto">
-              Connect to any PostgreSQL database and instantly explore tables, schemas,
+              Connect to PostgreSQL or SQLite and instantly explore tables, schemas,
               relationships, and data — with type-aware UI that adapts to your columns.
             </p>
           </div>
@@ -63,7 +63,7 @@ export function ConnectionForm({ onConnect, isConnecting, error }: ConnectionFor
               <input
                 id="connection-string"
                 type="text"
-                placeholder="postgresql://user:password@host:5432/dbname"
+                placeholder="postgresql://user:password@host:5432/dbname  or  /path/to/file.db"
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
                 disabled={isConnecting}

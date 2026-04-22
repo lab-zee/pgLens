@@ -1,12 +1,12 @@
 # pgLens
 
-See your Postgres clearly. Connect and instantly visualize your database — tables, schemas, relationships, and data.
+See your data clearly. Connect to PostgreSQL or SQLite and instantly visualize your database — tables, schemas, relationships, and data.
 
 **The problem:** People can build apps quicker than ever with AI, but they don't always have a firm grasp on the underlying data structures — how tables connect, what's in them, what types are used. pgLens gives you instant visibility.
 
 ## Features
 
-- **One-click connect** — Paste a PostgreSQL connection string and go
+- **One-click connect** — Paste a PostgreSQL connection string or SQLite file path and go
 - **Saved connections** — Recent connections are remembered with masked passwords, one click to reconnect
 - **Auto-discovery** — Finds all tables, columns, types, primary keys, foreign keys, and indexes
 - **Relationship graph** — SVG network diagram showing FK connections between tables
@@ -24,7 +24,7 @@ See your Postgres clearly. Connect and instantly visualize your database — tab
 docker compose up
 ```
 
-Open http://localhost:3001 and paste your PostgreSQL connection string. That's it.
+Open http://localhost:3001 and paste your PostgreSQL connection string or SQLite file path. That's it.
 
 ### Option 2: Docker without Compose
 
@@ -36,7 +36,7 @@ docker run -p 3001:3001 pglens
 ### Option 3: Node.js
 
 ```bash
-# Prerequisites: Node.js >= 20, pnpm >= 9
+# Prerequisites: Node.js >= 24, pnpm >= 9
 pnpm install
 pnpm start          # Build + run production server on :3001
 ```
@@ -50,7 +50,7 @@ pnpm dev             # Server on :3001, Client on :5173 (hot reload)
 
 ### Deploy to a platform
 
-pgLens needs a server runtime (it maintains live Postgres connections), so static hosts like GitHub Pages won't work. It runs great on:
+pgLens needs a server runtime (it maintains live database connections), so static hosts like GitHub Pages won't work. It runs great on:
 
 - **Railway** — connect your repo, set build command to `pnpm build`, start command to `node packages/server/dist/index.js`
 - **Render** — same setup, or use the Dockerfile
@@ -69,7 +69,7 @@ Because of this, we encourage running pgLens locally or self-hosting it. The cod
 
 | Layer     | Technology                                    |
 | --------- | --------------------------------------------- |
-| Server    | Node.js, Fastify, node-postgres (`pg`), Zod   |
+| Server    | Node.js, Fastify, node-postgres (`pg`), better-sqlite3, Zod |
 | Client    | React 19, Vite, TanStack Table, Tailwind CSS  |
 | Testing   | Vitest, Testing Library, Fastify inject        |
 | Tooling   | TypeScript (strict), ESLint, Prettier, pnpm    |
@@ -112,7 +112,7 @@ Query params for data endpoint: `page`, `pageSize`, `sortColumn`, `sortDirection
 
 ## Testing
 
-113 unit/component tests + 5 integration tests against real PostgreSQL.
+141 unit/component tests + 5 integration tests against real PostgreSQL.
 
 ```bash
 pnpm test                    # Unit + component tests

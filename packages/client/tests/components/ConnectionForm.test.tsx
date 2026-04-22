@@ -12,7 +12,7 @@ describe('ConnectionForm', () => {
   it('should render the landing page with branding and feature cards', () => {
     render(<ConnectionForm onConnect={vi.fn()} isConnecting={false} error={null} />);
     expect(screen.getByText('pgLens')).toBeInTheDocument();
-    expect(screen.getByText('See your Postgres clearly.')).toBeInTheDocument();
+    expect(screen.getByText('See your data clearly.')).toBeInTheDocument();
     expect(screen.getByLabelText('Connection String')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Connect' })).toBeInTheDocument();
     // Feature cards

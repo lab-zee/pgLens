@@ -31,8 +31,8 @@ export async function dataRoutes(app: FastifyInstance) {
     }
 
     try {
-      const pool = connectionManager.getPool(params.data.connectionId);
-      const data = await queryTableData(pool, query.data.schema, params.data.tableName, {
+      const adapter = connectionManager.getAdapter(params.data.connectionId);
+      const data = await queryTableData(adapter, query.data.schema, params.data.tableName, {
         page: query.data.page,
         pageSize: query.data.pageSize,
         sortColumn: query.data.sortColumn,

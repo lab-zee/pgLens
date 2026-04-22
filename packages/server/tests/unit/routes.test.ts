@@ -7,6 +7,12 @@ vi.mock('../../src/services/connection-manager.js', () => ({
   connect: vi.fn().mockResolvedValue('conn_test_123'),
   disconnect: vi.fn().mockResolvedValue(undefined),
   disconnectAll: vi.fn().mockResolvedValue(undefined),
+  getAdapter: vi.fn().mockReturnValue({
+    dialect: 'postgres',
+    supportsSchemas: true,
+    query: vi.fn().mockResolvedValue({ rows: [] }),
+  }),
+  // Keep getPool for backwards compat
   getPool: vi.fn().mockReturnValue({
     query: vi.fn().mockResolvedValue({ rows: [] }),
   }),

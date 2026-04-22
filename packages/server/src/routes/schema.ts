@@ -29,8 +29,8 @@ export async function schemaRoutes(app: FastifyInstance) {
     }
 
     try {
-      const pool = connectionManager.getPool(params.data.connectionId);
-      const schema = await introspectSchema(pool, query.data.schema);
+      const adapter = connectionManager.getAdapter(params.data.connectionId);
+      const schema = await introspectSchema(adapter, query.data.schema);
       return schema;
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to introspect schema';
@@ -51,8 +51,8 @@ export async function schemaRoutes(app: FastifyInstance) {
     }
 
     try {
-      const pool = connectionManager.getPool(params.data.connectionId);
-      const table = await introspectTable(pool, query.data.schema, params.data.tableName);
+      const adapter = connectionManager.getAdapter(params.data.connectionId);
+      const table = await introspectTable(adapter, query.data.schema, params.data.tableName);
       return table;
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to introspect table';
