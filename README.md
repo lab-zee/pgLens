@@ -67,13 +67,13 @@ Because of this, we encourage running pgLens locally or self-hosting it. The cod
 
 ## Tech Stack
 
-| Layer     | Technology                                    |
-| --------- | --------------------------------------------- |
-| Server    | Node.js, Fastify, node-postgres (`pg`), better-sqlite3, Zod |
-| Client    | React 19, Vite, TanStack Table, Tailwind CSS  |
-| Testing   | Vitest, Testing Library, Fastify inject        |
-| Tooling   | TypeScript (strict), ESLint, Prettier, pnpm    |
-| CI        | GitHub Actions (lint, typecheck, test, build)  |
+| Layer   | Technology                                                  |
+| ------- | ----------------------------------------------------------- |
+| Server  | Node.js, Fastify, node-postgres (`pg`), better-sqlite3, Zod |
+| Client  | React 19, Vite, TanStack Table, Tailwind CSS                |
+| Testing | Vitest, Testing Library, Fastify inject                     |
+| Tooling | TypeScript (strict), ESLint, Prettier, pnpm                 |
+| CI      | GitHub Actions (lint, typecheck, test, build)               |
 
 ## Project Structure
 
@@ -85,28 +85,28 @@ packages/
 
 ## Scripts
 
-| Command              | Description                              |
-| -------------------- | ---------------------------------------- |
-| `pnpm start`         | Build + run production server on :3001   |
-| `pnpm dev`           | Start server + client in dev mode        |
-| `pnpm test`          | Run all tests                            |
-| `pnpm test:coverage` | Run tests with coverage reports          |
-| `pnpm lint`          | Lint all packages                        |
-| `pnpm typecheck`     | TypeScript type checking                 |
-| `pnpm build`         | Production build                         |
-| `pnpm format`        | Format with Prettier                     |
+| Command              | Description                            |
+| -------------------- | -------------------------------------- |
+| `pnpm start`         | Build + run production server on :3001 |
+| `pnpm dev`           | Start server + client in dev mode      |
+| `pnpm test`          | Run all tests                          |
+| `pnpm test:coverage` | Run tests with coverage reports        |
+| `pnpm lint`          | Lint all packages                      |
+| `pnpm typecheck`     | TypeScript type checking               |
+| `pnpm build`         | Production build                       |
+| `pnpm format`        | Format with Prettier                   |
 
 ## API
 
-| Method | Endpoint                                          | Description              |
-| ------ | ------------------------------------------------- | ------------------------ |
-| POST   | `/api/connections`                                | Connect to a database    |
-| GET    | `/api/connections`                                | List active connections  |
-| DELETE | `/api/connections/:id`                            | Disconnect               |
-| GET    | `/api/connections/:id/schema`                     | Introspect full schema   |
-| GET    | `/api/connections/:id/tables/:name`               | Table detail             |
-| GET    | `/api/connections/:id/tables/:name/data`          | Paginated table data     |
-| GET    | `/api/health`                                     | Health check             |
+| Method | Endpoint                                 | Description             |
+| ------ | ---------------------------------------- | ----------------------- |
+| POST   | `/api/connections`                       | Connect to a database   |
+| GET    | `/api/connections`                       | List active connections |
+| DELETE | `/api/connections/:id`                   | Disconnect              |
+| GET    | `/api/connections/:id/schema`            | Introspect full schema  |
+| GET    | `/api/connections/:id/tables/:name`      | Table detail            |
+| GET    | `/api/connections/:id/tables/:name/data` | Paginated table data    |
+| GET    | `/api/health`                            | Health check            |
 
 Query params for data endpoint: `page`, `pageSize`, `sortColumn`, `sortDirection`, `search`, `searchColumn`.
 

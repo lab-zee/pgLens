@@ -8,12 +8,35 @@ const mockTable: TableInfo = {
   schema: 'public',
   rowCount: 100,
   columns: [
-    { name: 'id', dataType: 'integer', udtName: 'int4', isNullable: false, columnDefault: "nextval('users_id_seq')", isPrimaryKey: true, characterMaxLength: null, numericPrecision: 32 },
-    { name: 'email', dataType: 'varchar', udtName: 'varchar', isNullable: false, columnDefault: null, isPrimaryKey: false, characterMaxLength: 255, numericPrecision: null },
+    {
+      name: 'id',
+      dataType: 'integer',
+      udtName: 'int4',
+      isNullable: false,
+      columnDefault: "nextval('users_id_seq')",
+      isPrimaryKey: true,
+      characterMaxLength: null,
+      numericPrecision: 32,
+    },
+    {
+      name: 'email',
+      dataType: 'varchar',
+      udtName: 'varchar',
+      isNullable: false,
+      columnDefault: null,
+      isPrimaryKey: false,
+      characterMaxLength: 255,
+      numericPrecision: null,
+    },
   ],
   primaryKeys: ['id'],
   foreignKeys: [
-    { constraintName: 'fk_org', columnName: 'org_id', referencedTable: 'organizations', referencedColumn: 'id' },
+    {
+      constraintName: 'fk_org',
+      columnName: 'org_id',
+      referencedTable: 'organizations',
+      referencedColumn: 'id',
+    },
   ],
   indexes: [
     { name: 'users_pkey', isUnique: true, columns: ['id'] },

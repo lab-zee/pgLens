@@ -84,8 +84,6 @@ describeIf('Integration: Real PostgreSQL', () => {
   });
 
   it('should refuse write operations', async () => {
-    await expect(
-      pool.query('CREATE TABLE _pglens_test_should_fail (id int)'),
-    ).rejects.toThrow();
+    await expect(pool.query('CREATE TABLE _pglens_test_should_fail (id int)')).rejects.toThrow();
   });
 });

@@ -4,11 +4,56 @@ import { RecordCard } from '@/components/RecordCard';
 import type { ColumnInfo, TableInfo } from '@/types/schema';
 
 const columns: ColumnInfo[] = [
-  { name: 'id', dataType: 'integer', udtName: 'int4', isNullable: false, columnDefault: null, isPrimaryKey: true, characterMaxLength: null, numericPrecision: 32 },
-  { name: 'name', dataType: 'varchar', udtName: 'varchar', isNullable: false, columnDefault: null, isPrimaryKey: false, characterMaxLength: 255, numericPrecision: null },
-  { name: 'email', dataType: 'varchar', udtName: 'varchar', isNullable: true, columnDefault: null, isPrimaryKey: false, characterMaxLength: 255, numericPrecision: null },
-  { name: 'active', dataType: 'boolean', udtName: 'bool', isNullable: false, columnDefault: 'true', isPrimaryKey: false, characterMaxLength: null, numericPrecision: null },
-  { name: 'org_id', dataType: 'integer', udtName: 'int4', isNullable: true, columnDefault: null, isPrimaryKey: false, characterMaxLength: null, numericPrecision: null },
+  {
+    name: 'id',
+    dataType: 'integer',
+    udtName: 'int4',
+    isNullable: false,
+    columnDefault: null,
+    isPrimaryKey: true,
+    characterMaxLength: null,
+    numericPrecision: 32,
+  },
+  {
+    name: 'name',
+    dataType: 'varchar',
+    udtName: 'varchar',
+    isNullable: false,
+    columnDefault: null,
+    isPrimaryKey: false,
+    characterMaxLength: 255,
+    numericPrecision: null,
+  },
+  {
+    name: 'email',
+    dataType: 'varchar',
+    udtName: 'varchar',
+    isNullable: true,
+    columnDefault: null,
+    isPrimaryKey: false,
+    characterMaxLength: 255,
+    numericPrecision: null,
+  },
+  {
+    name: 'active',
+    dataType: 'boolean',
+    udtName: 'bool',
+    isNullable: false,
+    columnDefault: 'true',
+    isPrimaryKey: false,
+    characterMaxLength: null,
+    numericPrecision: null,
+  },
+  {
+    name: 'org_id',
+    dataType: 'integer',
+    udtName: 'int4',
+    isNullable: true,
+    columnDefault: null,
+    isPrimaryKey: false,
+    characterMaxLength: null,
+    numericPrecision: null,
+  },
 ];
 
 const table: TableInfo = {
@@ -17,7 +62,14 @@ const table: TableInfo = {
   rowCount: 100,
   columns,
   primaryKeys: ['id'],
-  foreignKeys: [{ constraintName: 'fk_org', columnName: 'org_id', referencedTable: 'orgs', referencedColumn: 'id' }],
+  foreignKeys: [
+    {
+      constraintName: 'fk_org',
+      columnName: 'org_id',
+      referencedTable: 'orgs',
+      referencedColumn: 'id',
+    },
+  ],
   indexes: [],
 };
 

@@ -117,9 +117,9 @@ export class SqliteAdapter implements DatabaseAdapter {
   }
 
   async getRowCount(_schema: string, table: string): Promise<number> {
-    const row = this.db
-      .prepare(`SELECT count(*) AS count FROM "${table}"`)
-      .get() as { count: number };
+    const row = this.db.prepare(`SELECT count(*) AS count FROM "${table}"`).get() as {
+      count: number;
+    };
     return row.count;
   }
 
@@ -187,9 +187,7 @@ export class SqliteAdapter implements DatabaseAdapter {
     const totalRows = countRow.count;
 
     const dataRows = this.db
-      .prepare(
-        `SELECT * FROM "${table}" ${whereClause} ${orderClause} LIMIT ? OFFSET ?`,
-      )
+      .prepare(`SELECT * FROM "${table}" ${whereClause} ${orderClause} LIMIT ? OFFSET ?`)
       .all(...queryParams, pageSize, offset) as Record<string, unknown>[];
 
     return {

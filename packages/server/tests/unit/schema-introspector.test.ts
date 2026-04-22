@@ -20,12 +20,14 @@ function createMockAdapter(overrides: Partial<DatabaseAdapter> = {}): DatabaseAd
       },
     ]),
     getForeignKeys: vi.fn().mockResolvedValue([]),
-    getIndexes: vi.fn().mockResolvedValue([
-      { name: 'users_pkey', isUnique: true, columns: ['id'] },
-    ]),
+    getIndexes: vi
+      .fn()
+      .mockResolvedValue([{ name: 'users_pkey', isUnique: true, columns: ['id'] }]),
     getRowCount: vi.fn().mockResolvedValue(5),
     tableExists: vi.fn().mockResolvedValue(true),
-    queryTableData: vi.fn().mockResolvedValue({ rows: [], totalRows: 0, page: 1, pageSize: 50, totalPages: 0 }),
+    queryTableData: vi
+      .fn()
+      .mockResolvedValue({ rows: [], totalRows: 0, page: 1, pageSize: 50, totalPages: 0 }),
     close: vi.fn().mockResolvedValue(undefined),
     ...overrides,
   };
@@ -108,9 +110,9 @@ describe('SchemaIntrospector', () => {
     it('should include indexes', async () => {
       const adapter = createMockAdapter({
         getColumns: vi.fn().mockResolvedValue([]),
-        getIndexes: vi.fn().mockResolvedValue([
-          { name: 'idx_email', isUnique: true, columns: ['email'] },
-        ]),
+        getIndexes: vi
+          .fn()
+          .mockResolvedValue([{ name: 'idx_email', isUnique: true, columns: ['email'] }]),
         getRowCount: vi.fn().mockResolvedValue(0),
       });
 

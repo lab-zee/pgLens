@@ -61,7 +61,7 @@ describe('PostgresAdapter', () => {
             },
           ],
         },
-        'table_constraints': {
+        table_constraints: {
           rows: [{ column_name: 'id' }],
         },
       });
@@ -150,9 +150,14 @@ describe('PostgresAdapter', () => {
   describe('queryTableData', () => {
     it('should return paginated data', async () => {
       const pool = createMockPool({
-        'EXISTS': { rows: [{ exists: true }] },
+        EXISTS: { rows: [{ exists: true }] },
         'count(*)': { rows: [{ count: '100' }] },
-        'SELECT *': { rows: [{ id: 1, name: 'Alice' }, { id: 2, name: 'Bob' }] },
+        'SELECT *': {
+          rows: [
+            { id: 1, name: 'Alice' },
+            { id: 2, name: 'Bob' },
+          ],
+        },
       });
       const adapter = new PostgresAdapter(pool);
       const result = await adapter.queryTableData('public', 'users');

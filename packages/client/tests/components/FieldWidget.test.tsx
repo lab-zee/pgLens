@@ -25,18 +25,14 @@ describe('FieldWidget', () => {
   });
 
   it('should render boolean as toggle-style display', () => {
-    const { container } = render(
-      <FieldWidget value={true} column={col({ udtName: 'bool' })} />,
-    );
+    const { container } = render(<FieldWidget value={true} column={col({ udtName: 'bool' })} />);
     expect(screen.getByText('Yes')).toBeInTheDocument();
     // Should have the green toggle
     expect(container.querySelector('.bg-green-500')).toBeInTheDocument();
   });
 
   it('should render false boolean correctly', () => {
-    const { container } = render(
-      <FieldWidget value={false} column={col({ udtName: 'bool' })} />,
-    );
+    const { container } = render(<FieldWidget value={false} column={col({ udtName: 'bool' })} />);
     expect(screen.getByText('No')).toBeInTheDocument();
     expect(container.querySelector('.bg-gray-300')).toBeInTheDocument();
   });
@@ -102,9 +98,7 @@ describe('FieldWidget', () => {
   });
 
   it('should render email columns as mailto links', () => {
-    render(
-      <FieldWidget value="test@example.com" column={col({ name: 'email' })} />,
-    );
+    render(<FieldWidget value="test@example.com" column={col({ name: 'email' })} />);
     const link = screen.getByRole('link');
     expect(link).toHaveAttribute('href', 'mailto:test@example.com');
   });
@@ -116,18 +110,14 @@ describe('FieldWidget', () => {
   });
 
   it('should render URL columns as clickable links', () => {
-    render(
-      <FieldWidget value="https://example.com" column={col({ name: 'website_url' })} />,
-    );
+    render(<FieldWidget value="https://example.com" column={col({ name: 'website_url' })} />);
     const link = screen.getByRole('link');
     expect(link).toHaveAttribute('href', 'https://example.com');
     expect(link).toHaveAttribute('target', '_blank');
   });
 
   it('should render hex colors with a swatch', () => {
-    const { container } = render(
-      <FieldWidget value="#ff5733" column={col()} />,
-    );
+    const { container } = render(<FieldWidget value="#ff5733" column={col()} />);
     const swatch = container.querySelector('[style*="background-color"]');
     expect(swatch).toBeInTheDocument();
     expect(screen.getByText('#ff5733')).toBeInTheDocument();

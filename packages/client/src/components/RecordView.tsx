@@ -28,14 +28,11 @@ export function RecordView({ connectionId, table }: RecordViewProps) {
     fetchData();
   }, [fetchData]);
 
-  const handleSearch = useCallback(
-    (q: string, col: string | undefined) => {
-      setSearch(q);
-      setSearchColumn(col);
-      setPage(1);
-    },
-    [],
-  );
+  const handleSearch = useCallback((q: string, col: string | undefined) => {
+    setSearch(q);
+    setSearchColumn(col);
+    setPage(1);
+  }, []);
 
   if (error) {
     return (
@@ -66,8 +63,8 @@ export function RecordView({ connectionId, table }: RecordViewProps) {
       {data && data.totalPages > 0 && (
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <span>
-            {data.totalRows.toLocaleString()} {search ? 'results' : 'records'} — Page {data.page}{' '}
-            of {data.totalPages}
+            {data.totalRows.toLocaleString()} {search ? 'results' : 'records'} — Page {data.page} of{' '}
+            {data.totalPages}
           </span>
           <div className="flex gap-2">
             <button

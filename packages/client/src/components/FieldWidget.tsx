@@ -123,10 +123,7 @@ function JsonWidget({ value }: { value: unknown }) {
   return (
     <div>
       {!expanded && isLong ? (
-        <button
-          onClick={() => setExpanded(true)}
-          className="text-left text-sm"
-        >
+        <button onClick={() => setExpanded(true)} className="text-left text-sm">
           <code className="rounded bg-muted px-1.5 py-0.5 text-xs">
             {preview.length > 60 ? preview.slice(0, 60) + '...' : preview}
           </code>
@@ -202,11 +199,12 @@ function UuidWidget({ value }: { value: string }) {
 function NumberWidget({ value, udtName }: { value: unknown; udtName: string }) {
   const num = Number(value);
   const isFloat = ['float4', 'float8', 'numeric', 'money'].includes(udtName);
-  const formatted = udtName === 'money'
-    ? num.toLocaleString(undefined, { style: 'currency', currency: 'USD' })
-    : isFloat
-      ? num.toLocaleString(undefined, { maximumFractionDigits: 6 })
-      : num.toLocaleString();
+  const formatted =
+    udtName === 'money'
+      ? num.toLocaleString(undefined, { style: 'currency', currency: 'USD' })
+      : isFloat
+        ? num.toLocaleString(undefined, { maximumFractionDigits: 6 })
+        : num.toLocaleString();
 
   return <span className="text-sm font-mono tabular-nums">{formatted}</span>;
 }
@@ -218,10 +216,7 @@ function ArrayWidget({ value }: { value: unknown[] }) {
   return (
     <div className="flex flex-wrap gap-1">
       {value.map((item, i) => (
-        <span
-          key={i}
-          className="inline-flex items-center rounded bg-muted px-2 py-0.5 text-xs"
-        >
+        <span key={i} className="inline-flex items-center rounded bg-muted px-2 py-0.5 text-xs">
           {JSON.stringify(item)}
         </span>
       ))}
@@ -231,10 +226,7 @@ function ArrayWidget({ value }: { value: unknown[] }) {
 
 function EmailWidget({ value }: { value: string }) {
   return (
-    <a
-      href={`mailto:${value}`}
-      className="text-sm text-blue-600 hover:underline"
-    >
+    <a href={`mailto:${value}`} className="text-sm text-blue-600 hover:underline">
       {value}
     </a>
   );
@@ -256,10 +248,7 @@ function UrlWidget({ value }: { value: string }) {
 function ColorWidget({ value }: { value: string }) {
   return (
     <div className="flex items-center gap-2">
-      <div
-        className="h-5 w-5 rounded border border-border"
-        style={{ backgroundColor: value }}
-      />
+      <div className="h-5 w-5 rounded border border-border" style={{ backgroundColor: value }} />
       <code className="text-xs font-mono">{value}</code>
     </div>
   );
@@ -269,9 +258,7 @@ function LongTextWidget({ value }: { value: string }) {
   const [expanded, setExpanded] = useState(false);
   return (
     <div>
-      <p className="text-sm whitespace-pre-wrap">
-        {expanded ? value : value.slice(0, 80) + '...'}
-      </p>
+      <p className="text-sm whitespace-pre-wrap">{expanded ? value : value.slice(0, 80) + '...'}</p>
       <button
         onClick={() => setExpanded(!expanded)}
         className="mt-0.5 text-xs text-blue-600 hover:underline"

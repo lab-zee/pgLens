@@ -5,9 +5,36 @@ import { SearchBar } from '@/components/SearchBar';
 import type { ColumnInfo } from '@/types/schema';
 
 const columns: ColumnInfo[] = [
-  { name: 'id', dataType: 'integer', udtName: 'int4', isNullable: false, columnDefault: null, isPrimaryKey: true, characterMaxLength: null, numericPrecision: 32 },
-  { name: 'name', dataType: 'varchar', udtName: 'varchar', isNullable: false, columnDefault: null, isPrimaryKey: false, characterMaxLength: 255, numericPrecision: null },
-  { name: 'email', dataType: 'varchar', udtName: 'varchar', isNullable: true, columnDefault: null, isPrimaryKey: false, characterMaxLength: 255, numericPrecision: null },
+  {
+    name: 'id',
+    dataType: 'integer',
+    udtName: 'int4',
+    isNullable: false,
+    columnDefault: null,
+    isPrimaryKey: true,
+    characterMaxLength: null,
+    numericPrecision: 32,
+  },
+  {
+    name: 'name',
+    dataType: 'varchar',
+    udtName: 'varchar',
+    isNullable: false,
+    columnDefault: null,
+    isPrimaryKey: false,
+    characterMaxLength: 255,
+    numericPrecision: null,
+  },
+  {
+    name: 'email',
+    dataType: 'varchar',
+    udtName: 'varchar',
+    isNullable: true,
+    columnDefault: null,
+    isPrimaryKey: false,
+    characterMaxLength: 255,
+    numericPrecision: null,
+  },
 ];
 
 describe('SearchBar', () => {

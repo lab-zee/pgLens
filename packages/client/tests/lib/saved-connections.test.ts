@@ -86,9 +86,7 @@ describe('saved-connections', () => {
     });
 
     it('should handle connection strings without password', () => {
-      expect(maskConnectionString('postgresql://user@host/db')).toBe(
-        'postgresql://user@host/db',
-      );
+      expect(maskConnectionString('postgresql://user@host/db')).toBe('postgresql://user@host/db');
     });
 
     it('should handle complex passwords', () => {

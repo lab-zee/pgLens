@@ -104,7 +104,9 @@ describe('ConnectionManager', () => {
     });
 
     it('should throw for an unknown connection ID', () => {
-      expect(() => connectionManager.getAdapter('conn_nonexistent')).toThrow('Connection not found');
+      expect(() => connectionManager.getAdapter('conn_nonexistent')).toThrow(
+        'Connection not found',
+      );
     });
   });
 

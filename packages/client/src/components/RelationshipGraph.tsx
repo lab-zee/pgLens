@@ -92,12 +92,7 @@ export function RelationshipGraph({ schema, onSelectTable }: RelationshipGraphPr
 
       {!collapsed && (
         <div className="overflow-auto px-6 pb-4" style={{ maxHeight: 360 }}>
-          <svg
-            ref={svgRef}
-            width={bounds.width}
-            height={bounds.height}
-            className="select-none"
-          >
+          <svg ref={svgRef} width={bounds.width} height={bounds.height} className="select-none">
             <defs>
               <marker
                 id="arrowhead"
@@ -212,10 +207,7 @@ export function RelationshipGraph({ schema, onSelectTable }: RelationshipGraphPr
  * Simple layout: tables with FK connections are placed near each other.
  * Uses a modified grid layout where connected components cluster together.
  */
-function layoutNodes(
-  schema: SchemaOverview,
-  edges: Edge[],
-): Record<string, NodePosition> {
+function layoutNodes(schema: SchemaOverview, edges: Edge[]): Record<string, NodePosition> {
   const positions: Record<string, NodePosition> = {};
   const placed = new Set<string>();
 
@@ -246,7 +238,7 @@ function layoutNodes(
     let ni = 0;
     for (const neighbor of neighbors) {
       if (placed.has(neighbor)) continue;
-      const nx = x + ((ni % 2 === 0 ? 1 : -1) * NODE_W * (Math.floor(ni / 2) + 1));
+      const nx = x + (ni % 2 === 0 ? 1 : -1) * NODE_W * (Math.floor(ni / 2) + 1);
       const ny = y + NODE_H;
       place(neighbor, Math.max(0, nx), ny);
       ni++;

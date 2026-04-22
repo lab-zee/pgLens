@@ -3,12 +3,24 @@ import { ConnectionForm } from '@/components/ConnectionForm';
 import { Dashboard } from '@/components/Dashboard';
 
 export function App() {
-  const { connectionId, schema, isConnecting, isLoading, error, connectAndLoad, disconnect, refreshSchema } =
-    useConnection();
+  const {
+    connectionId,
+    schema,
+    isConnecting,
+    isLoading,
+    error,
+    connectAndLoad,
+    disconnect,
+    refreshSchema,
+  } = useConnection();
 
   if (!connectionId || !schema) {
     return (
-      <ConnectionForm onConnect={connectAndLoad} isConnecting={isConnecting || isLoading} error={error} />
+      <ConnectionForm
+        onConnect={connectAndLoad}
+        isConnecting={isConnecting || isLoading}
+        error={error}
+      />
     );
   }
 

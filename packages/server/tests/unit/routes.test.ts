@@ -16,9 +16,9 @@ vi.mock('../../src/services/connection-manager.js', () => ({
   getPool: vi.fn().mockReturnValue({
     query: vi.fn().mockResolvedValue({ rows: [] }),
   }),
-  listConnections: vi.fn().mockReturnValue([
-    { id: 'conn_test_123', connectedAt: new Date(), lastUsed: new Date() },
-  ]),
+  listConnections: vi
+    .fn()
+    .mockReturnValue([{ id: 'conn_test_123', connectedAt: new Date(), lastUsed: new Date() }]),
 }));
 
 // Mock schema introspector

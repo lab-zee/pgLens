@@ -3,8 +3,17 @@ import { queryTableData } from '../../src/services/data-query.js';
 import type { DatabaseAdapter } from '../../src/services/database-adapter.js';
 
 function createMockAdapter(
-  queryResult: { rows: Record<string, unknown>[]; totalRows: number; page?: number; pageSize?: number; totalPages?: number } = {
-    rows: [{ id: 1, name: 'Alice' }, { id: 2, name: 'Bob' }],
+  queryResult: {
+    rows: Record<string, unknown>[];
+    totalRows: number;
+    page?: number;
+    pageSize?: number;
+    totalPages?: number;
+  } = {
+    rows: [
+      { id: 1, name: 'Alice' },
+      { id: 2, name: 'Bob' },
+    ],
     totalRows: 100,
   },
 ): DatabaseAdapter {
@@ -13,7 +22,8 @@ function createMockAdapter(
     totalRows: queryResult.totalRows,
     page: queryResult.page ?? 1,
     pageSize: queryResult.pageSize ?? 50,
-    totalPages: queryResult.totalPages ?? Math.ceil(queryResult.totalRows / (queryResult.pageSize ?? 50)),
+    totalPages:
+      queryResult.totalPages ?? Math.ceil(queryResult.totalRows / (queryResult.pageSize ?? 50)),
   };
 
   return {

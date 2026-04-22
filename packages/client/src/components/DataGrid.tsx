@@ -40,14 +40,11 @@ export function DataGrid({ connectionId, table }: DataGridProps) {
     fetchData();
   }, [fetchData]);
 
-  const handleSearch = useCallback(
-    (q: string, col: string | undefined) => {
-      setSearch(q);
-      setSearchColumn(col);
-      setPage(1);
-    },
-    [],
-  );
+  const handleSearch = useCallback((q: string, col: string | undefined) => {
+    setSearch(q);
+    setSearchColumn(col);
+    setPage(1);
+  }, []);
 
   const columns: ColumnDef<Record<string, unknown>>[] = table.columns.map((col) => ({
     accessorKey: col.name,

@@ -43,9 +43,7 @@ export function SearchBar({ columns, onSearch, debounceMs = 300 }: SearchBarProp
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={
-            selectedColumn
-              ? `Search in "${selectedColumn}"...`
-              : 'Search all columns...'
+            selectedColumn ? `Search in "${selectedColumn}"...` : 'Search all columns...'
           }
           className={cn(
             'h-9 w-full rounded-md border border-border bg-background px-3 pr-8 text-sm',

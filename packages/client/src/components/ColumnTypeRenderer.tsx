@@ -53,16 +53,16 @@ export function CellRenderer({ value, udtName }: CellRendererProps) {
   // UUID — truncate for display
   if (udtName === 'uuid') {
     const str = String(value);
-    return <span className="font-mono text-xs" title={str}>{str.slice(0, 8)}...</span>;
+    return (
+      <span className="font-mono text-xs" title={str}>
+        {str.slice(0, 8)}...
+      </span>
+    );
   }
 
   // Arrays
   if (Array.isArray(value)) {
-    return (
-      <span className="text-xs">
-        [{value.map((v) => JSON.stringify(v)).join(', ')}]
-      </span>
-    );
+    return <span className="text-xs">[{value.map((v) => JSON.stringify(v)).join(', ')}]</span>;
   }
 
   // Numeric types — right-align

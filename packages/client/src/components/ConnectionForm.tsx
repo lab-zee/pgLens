@@ -45,12 +45,10 @@ export function ConnectionForm({ onConnect, isConnecting, error }: ConnectionFor
           {/* Branding */}
           <div className="space-y-3 text-center">
             <h1 className="text-4xl font-bold tracking-tight">pgLens</h1>
-            <p className="text-lg text-muted-foreground">
-              See your data clearly.
-            </p>
+            <p className="text-lg text-muted-foreground">See your data clearly.</p>
             <p className="text-sm text-muted-foreground max-w-md mx-auto">
-              Connect to PostgreSQL or SQLite and instantly explore tables, schemas,
-              relationships, and data — with type-aware UI that adapts to your columns.
+              Connect to PostgreSQL or SQLite and instantly explore tables, schemas, relationships,
+              and data — with type-aware UI that adapts to your columns.
             </p>
           </div>
 
@@ -175,11 +173,12 @@ export function ConnectionForm({ onConnect, isConnecting, error }: ConnectionFor
         <div className="max-w-xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
           <div className="text-center sm:text-left space-y-0.5">
             <p>
-              pgLens is open source and free to use.
-              We encourage you to run it locally, self-host, fork, and contribute.
+              pgLens is open source and free to use. We encourage you to run it locally, self-host,
+              fork, and contribute.
             </p>
             <p>
-              Your data and connection strings are never persisted server-side, logged, or sent to third parties.
+              Your data and connection strings are never persisted server-side, logged, or sent to
+              third parties.
             </p>
           </div>
           <div className="flex gap-3 shrink-0">

@@ -34,9 +34,7 @@ export function Dashboard({
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-lg font-bold">pgLens</h1>
-            <p className="text-xs text-muted-foreground">
-              {schema.tables.length} tables found
-            </p>
+            <p className="text-xs text-muted-foreground">{schema.tables.length} tables found</p>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -57,17 +55,23 @@ export function Dashboard({
       </header>
 
       {/* Relationship graph */}
-      <RelationshipGraph schema={schema} onSelectTable={(name) => {
-        const table = schema.tables.find((t) => t.name === name);
-        if (table) {
-          setSelectedTable(table);
-          setViewMode('schema');
-        }
-      }} />
+      <RelationshipGraph
+        schema={schema}
+        onSelectTable={(name) => {
+          const table = schema.tables.find((t) => t.name === name);
+          if (table) {
+            setSelectedTable(table);
+            setViewMode('schema');
+          }
+        }}
+      />
 
       <div className="flex">
         {/* Sidebar — table list */}
-        <aside className="w-72 shrink-0 border-r border-border p-4 overflow-y-auto" style={{ height: 'calc(100vh - 57px)' }}>
+        <aside
+          className="w-72 shrink-0 border-r border-border p-4 overflow-y-auto"
+          style={{ height: 'calc(100vh - 57px)' }}
+        >
           <h2 className="mb-3 text-sm font-medium text-muted-foreground">Tables</h2>
           <div className="space-y-2">
             {schema.tables.map((table) => (

@@ -64,7 +64,10 @@ export function TableDetail({ table }: TableDetailProps) {
           <h3 className="text-sm font-medium text-muted-foreground">Indexes</h3>
           <div className="mt-2 space-y-1">
             {table.indexes.map((idx) => (
-              <div key={idx.name} className="flex items-center gap-2 rounded border px-3 py-2 text-sm">
+              <div
+                key={idx.name}
+                className="flex items-center gap-2 rounded border px-3 py-2 text-sm"
+              >
                 <span className="font-medium">{idx.name}</span>
                 {idx.isUnique && (
                   <span className="rounded bg-primary/10 px-1 py-0.5 text-xs font-medium text-primary">

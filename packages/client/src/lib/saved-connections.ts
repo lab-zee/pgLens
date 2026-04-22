@@ -47,11 +47,7 @@ export function maskConnectionString(connectionString: string): string {
 
 function isSqliteConnection(connectionString: string): boolean {
   const s = connectionString.trim();
-  return (
-    s.startsWith('sqlite:') ||
-    /\.(db|sqlite|sqlite3)$/i.test(s) ||
-    s === ':memory:'
-  );
+  return s.startsWith('sqlite:') || /\.(db|sqlite|sqlite3)$/i.test(s) || s === ':memory:';
 }
 
 function parseLabel(connectionString: string): string {

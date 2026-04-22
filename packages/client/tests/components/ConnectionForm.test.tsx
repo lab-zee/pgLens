@@ -49,9 +49,7 @@ describe('ConnectionForm', () => {
   });
 
   it('should display an error message', () => {
-    render(
-      <ConnectionForm onConnect={vi.fn()} isConnecting={false} error="Connection refused" />,
-    );
+    render(<ConnectionForm onConnect={vi.fn()} isConnecting={false} error="Connection refused" />);
     expect(screen.getByText('Connection refused')).toBeInTheDocument();
   });
 
