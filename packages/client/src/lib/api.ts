@@ -1,6 +1,10 @@
-import type { SchemaOverview, TableInfo, TableDataPage } from '@/types/schema';
+import type { SchemaOverview, TableDataPage } from '@/types/schema';
 
 const BASE = '/api';
+
+function pathSegment(value: string): string {
+  return encodeURIComponent(value);
+}
 
 async function request<T>(url: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE}${url}`, {
@@ -23,19 +27,12 @@ export async function connect(connectionString: string): Promise<{ id: string }>
 }
 
 export async function disconnect(connectionId: string): Promise<void> {
-  return request(`/connections/${connectionId}`, { method: 'DELETE' });
+  return request(`/connections/${pathSegment(connectionId)}`, { method: 'DELETE' });
 }
 
 export async function getSchema(connectionId: string, schema = 'public'): Promise<SchemaOverview> {
-  return request(`/connections/${connectionId}/schema?schema=${schema}`);
-}
-
-export async function getTable(
-  connectionId: string,
-  tableName: string,
-  schema = 'public',
-): Promise<TableInfo> {
-  return request(`/connections/${connectionId}/tables/${tableName}?schema=${schema}`);
+  const params = new URLSearchParams({ schema });
+  return request(`/connections/${pathSegment(connectionId)}/schema?${params}`);
 }
 
 export async function getTableData(
@@ -53,11 +50,13 @@ export async function getTableData(
 ): Promise<TableDataPage> {
   const params = new URLSearchParams();
   if (options.schema) params.set('schema', options.schema);
-  if (options.page) params.set('page', String(options.page));
-  if (options.pageSize) params.set('pageSize', String(options.pageSize));
+  if (options.page !== undefined) params.set('page', String(options.page));
+  if (options.pageSize !== undefined) params.set('pageSize', String(options.pageSize));
   if (options.sortColumn) params.set('sortColumn', options.sortColumn);
   if (options.sortDirection) params.set('sortDirection', options.sortDirection);
   if (options.search) params.set('search', options.search);
   if (options.searchColumn) params.set('searchColumn', options.searchColumn);
-  return request(`/connections/${connectionId}/tables/${tableName}/data?${params}`);
+  const query = params.toString();
+  const path = `/connections/${pathSegment(connectionId)}/tables/${pathSegment(tableName)}/data`;
+  return request(query ? `${path}?${query}` : path);
 }

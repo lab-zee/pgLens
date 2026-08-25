@@ -79,6 +79,18 @@ describe('ConnectionManager', () => {
       await expect(connectionManager.connect('postgresql://bad@localhost/nope')).rejects.toThrow(
         'ECONNREFUSED',
       );
+      expect(mockEnd).toHaveBeenCalledOnce();
+    });
+
+    it('should release the client and close the pool when verification fails', async () => {
+      mockQuery.mockRejectedValueOnce(new Error('permission denied'));
+
+      await expect(
+        connectionManager.connect('postgresql://test@localhost/restricted'),
+      ).rejects.toThrow('permission denied');
+
+      expect(mockRelease).toHaveBeenCalledOnce();
+      expect(mockEnd).toHaveBeenCalledOnce();
     });
   });
 
@@ -110,10 +122,30 @@ describe('ConnectionManager', () => {
     });
   });
 
+  describe('getPool', () => {
+    it('should expose the pool for PostgreSQL connections', async () => {
+      const id = await connectionManager.connect('postgresql://test@localhost/testdb');
+      const pool = connectionManager.getPool(id);
+
+      expect(pool.connect).toBe(mockConnect);
+      expect(pool.end).toBe(mockEnd);
+    });
+
+    it('should reject SQLite and unknown connections', async () => {
+      const sqliteId = await connectionManager.connect('sqlite:/tmp/test.db');
+
+      expect(() => connectionManager.getPool(sqliteId)).toThrow(
+        'only available for PostgreSQL connections',
+      );
+      expect(() => connectionManager.getPool('conn_unknown')).toThrow('Connection not found');
+    });
+  });
+
   describe('disconnect', () => {
     it('should close the adapter and remove the connection', async () => {
       const id = await connectionManager.connect('postgresql://test@localhost/testdb');
       await connectionManager.disconnect(id);
+      expect(mockEnd).toHaveBeenCalledOnce();
       expect(() => connectionManager.getAdapter(id)).toThrow('Connection not found');
     });
 

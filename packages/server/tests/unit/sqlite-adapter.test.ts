@@ -34,6 +34,16 @@ describe('SqliteAdapter', () => {
         FOREIGN KEY (user_id) REFERENCES users(id)
       );
 
+      CREATE TABLE typed_values (
+        payload BLOB,
+        published_on DATE,
+        seen_at TIMESTAMP,
+        metadata JSON,
+        external_id UUID,
+        amount DECIMAL(10, 2),
+        custom_value CUSTOM
+      );
+
       CREATE INDEX idx_posts_user_id ON posts(user_id);
       CREATE UNIQUE INDEX idx_users_email ON users(email);
 
@@ -90,6 +100,19 @@ describe('SqliteAdapter', () => {
 
       const scoreCol = columns.find((c) => c.name === 'score')!;
       expect(scoreCol.udtName).toBe('float8');
+    });
+
+    it('should map SQLite declared types to client-compatible metadata', async () => {
+      const columns = await adapter.getColumns('main', 'typed_values');
+      const byName = Object.fromEntries(columns.map((column) => [column.name, column]));
+
+      expect(byName.payload.udtName).toBe('bytea');
+      expect(byName.published_on.udtName).toBe('date');
+      expect(byName.seen_at.udtName).toBe('timestamp');
+      expect(byName.metadata.udtName).toBe('json');
+      expect(byName.external_id.udtName).toBe('uuid');
+      expect(byName.amount.udtName).toBe('numeric');
+      expect(byName.custom_value.udtName).toBe('text');
     });
   });
 
@@ -195,6 +218,24 @@ describe('SqliteAdapter', () => {
     it('should cap page size at 500', async () => {
       const result = await adapter.queryTableData('main', 'users', { pageSize: 1000 });
       expect(result.pageSize).toBe(500);
+    });
+
+    it('should clamp non-positive pagination values', async () => {
+      const result = await adapter.queryTableData('main', 'users', { page: -2, pageSize: 0 });
+      expect(result.page).toBe(1);
+      expect(result.pageSize).toBe(1);
+      expect(result.rows).toHaveLength(1);
+    });
+
+    it('should ignore unknown sort and search columns', async () => {
+      const result = await adapter.queryTableData('main', 'users', {
+        sortColumn: 'name"; DROP TABLE users; --',
+        search: 'Alice',
+        searchColumn: 'missing',
+      });
+
+      expect(result.totalRows).toBe(3);
+      expect(await adapter.tableExists('main', 'users')).toBe(true);
     });
   });
 });

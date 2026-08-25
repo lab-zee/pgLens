@@ -49,11 +49,16 @@ export async function connect(connectionString: string): Promise<ConnectionId> {
       connectionTimeoutMillis: 10_000,
     });
 
-    const client = await pool.connect();
     try {
-      await client.query('SELECT 1');
-    } finally {
-      client.release();
+      const client = await pool.connect();
+      try {
+        await client.query('SELECT 1');
+      } finally {
+        client.release();
+      }
+    } catch (error) {
+      await pool.end().catch(() => {});
+      throw error;
     }
 
     adapter = new PostgresAdapter(pool);

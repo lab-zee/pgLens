@@ -36,15 +36,15 @@ docker run -p 3001:3001 pglens
 ### Option 3: Node.js
 
 ```bash
-# Prerequisites: Node.js >= 24, pnpm >= 9
-pnpm install
+# Prerequisites: Node.js >= 24, pnpm 10.26.0
+pnpm install --frozen-lockfile
 pnpm start          # Build + run production server on :3001
 ```
 
 ### Option 4: Development mode
 
 ```bash
-pnpm install
+pnpm install --frozen-lockfile
 pnpm dev             # Server on :3001, Client on :5173 (hot reload)
 ```
 
@@ -93,8 +93,11 @@ packages/
 | `pnpm test:coverage` | Run tests with coverage reports        |
 | `pnpm lint`          | Lint all packages                      |
 | `pnpm typecheck`     | TypeScript type checking               |
+| `pnpm knip`          | Find unused files and dependencies     |
 | `pnpm build`         | Production build                       |
 | `pnpm format`        | Format with Prettier                   |
+| `pnpm format:check`  | Verify Prettier formatting             |
+| `pnpm check`         | Run every blocking CI quality gate     |
 
 ## API
 
@@ -112,12 +115,18 @@ Query params for data endpoint: `page`, `pageSize`, `sortColumn`, `sortDirection
 
 ## Testing
 
-141 unit/component tests + 5 integration tests against real PostgreSQL.
+The default suite runs unit and component tests without external services. Five additional smoke
+tests run when `DATABASE_URL` points to a real PostgreSQL database.
 
 ```bash
-pnpm test                    # Unit + component tests
-DATABASE_URL="..." pnpm --filter @pglens/server test  # Include integration
+pnpm test                            # Unit + component tests
+pnpm test:coverage                   # Tests plus enforced coverage thresholds
+pnpm check                           # Full local CI-equivalent gate
+DATABASE_URL="..." pnpm --filter @pglens/server test  # Include PostgreSQL smoke tests
 ```
+
+Coverage includes executable server and client source. Runtime entrypoints and type-only declaration
+files are excluded; thresholds are enforced independently for each package.
 
 ## Contributing
 
