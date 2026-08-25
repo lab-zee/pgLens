@@ -115,6 +115,19 @@ describe('PostgresAdapter', () => {
       expect(indexes[0].isUnique).toBe(true);
       expect(indexes[0].columns).toContain('email');
     });
+
+    it('should tolerate index definitions without a column list', async () => {
+      const pool = createMockPool({
+        pg_indexes: {
+          rows: [{ indexname: 'unusual_idx', indexdef: 'CREATE INDEX unusual_idx' }],
+        },
+      });
+      const adapter = new PostgresAdapter(pool);
+
+      await expect(adapter.getIndexes('public', 'users')).resolves.toEqual([
+        { name: 'unusual_idx', isUnique: false, columns: [] },
+      ]);
+    });
   });
 
   describe('getRowCount', () => {
@@ -126,6 +139,16 @@ describe('PostgresAdapter', () => {
       const adapter = new PostgresAdapter(pool);
       const count = await adapter.getRowCount('public', 'users');
       expect(count).toBe(42);
+    });
+
+    it('should use the planner estimate for large tables', async () => {
+      const pool = createMockPool({
+        reltuples: { rows: [{ reltuples: 25_000 }] },
+      });
+      const adapter = new PostgresAdapter(pool);
+
+      expect(await adapter.getRowCount('public', 'events')).toBe(25_000);
+      expect(pool.query).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -173,6 +196,58 @@ describe('PostgresAdapter', () => {
       });
       const adapter = new PostgresAdapter(pool);
       await expect(adapter.queryTableData('public', 'nope')).rejects.toThrow('Table not found');
+    });
+
+    it('should validate sort and search columns before building a parameterized query', async () => {
+      const query = vi
+        .fn()
+        .mockResolvedValueOnce({ rows: [{ exists: true }] })
+        .mockResolvedValueOnce({ rows: [{ exists: true }] })
+        .mockResolvedValueOnce({ rows: [{ exists: true }] })
+        .mockResolvedValueOnce({ rows: [{ count: '1' }] })
+        .mockResolvedValueOnce({ rows: [{ id: 1, name: 'Ada' }] });
+      const pool = {
+        query,
+        end: vi.fn().mockResolvedValue(undefined),
+      } as unknown as import('pg').Pool;
+      const adapter = new PostgresAdapter(pool);
+
+      const result = await adapter.queryTableData('public', 'users', {
+        page: -2,
+        pageSize: 1000,
+        sortColumn: 'name',
+        sortDirection: 'desc',
+        search: ' Ada ',
+        searchColumn: 'name',
+      });
+
+      expect(result).toMatchObject({ page: 1, pageSize: 500, totalRows: 1, totalPages: 1 });
+      expect(query.mock.calls[4][0]).toContain(
+        'WHERE "name"::text ILIKE $1 ORDER BY "name" DESC LIMIT $2 OFFSET $3',
+      );
+      expect(query.mock.calls[4][1]).toEqual(['%Ada%', 500, 0]);
+    });
+
+    it('should search across discovered columns with separate placeholders', async () => {
+      const query = vi
+        .fn()
+        .mockResolvedValueOnce({ rows: [{ exists: true }] })
+        .mockResolvedValueOnce({ rows: [{ column_name: 'name' }, { column_name: 'email' }] })
+        .mockResolvedValueOnce({ rows: [{ count: '2' }] })
+        .mockResolvedValueOnce({ rows: [{ name: 'Test', email: 'test@example.com' }] });
+      const pool = {
+        query,
+        end: vi.fn().mockResolvedValue(undefined),
+      } as unknown as import('pg').Pool;
+      const adapter = new PostgresAdapter(pool);
+
+      await adapter.queryTableData('public', 'users', { search: 'test' });
+
+      expect(query.mock.calls[2][0]).toContain(
+        'WHERE "name"::text ILIKE $1 OR "email"::text ILIKE $2',
+      );
+      expect(query.mock.calls[2][1]).toEqual(['%test%', '%test%']);
+      expect(query.mock.calls[3][1]).toEqual(['%test%', '%test%', 50, 0]);
     });
   });
 

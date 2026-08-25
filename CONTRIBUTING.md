@@ -6,16 +6,16 @@ Thanks for your interest in contributing! Here's how to get started.
 
 ### Prerequisites
 
-- Node.js >= 20
-- pnpm >= 9
+- Node.js >= 24 (CI uses 24.9.0)
+- pnpm 10.26.0 (pinned by `packageManager`)
 - A PostgreSQL database to test against (optional — unit tests don't need one)
 
 ### Getting Started
 
 ```bash
-git clone https://github.com/davidinwald/pglens.git
-cd pglens
-pnpm install
+git clone https://github.com/lab-zee/pgLens.git
+cd pgLens
+pnpm install --frozen-lockfile
 ```
 
 ### Running in Development
@@ -54,6 +54,8 @@ pnpm lint:fix      # ESLint with auto-fix
 pnpm format        # Prettier format
 pnpm format:check  # Prettier check
 pnpm typecheck     # TypeScript type checking
+pnpm knip          # Dead files, exports, and dependencies
+pnpm check         # Every blocking CI gate
 ```
 
 ## Project Structure
@@ -89,5 +91,5 @@ packages/
 
 1. Fork the repo and create a feature branch from `main`
 2. Make your changes with tests
-3. Ensure `pnpm lint && pnpm typecheck && pnpm test` all pass
+3. Ensure `pnpm check` passes
 4. Submit a PR with a clear description of the changes

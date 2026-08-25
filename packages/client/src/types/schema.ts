@@ -9,14 +9,14 @@ export interface ColumnInfo {
   numericPrecision: number | null;
 }
 
-export interface ForeignKey {
+interface ForeignKey {
   constraintName: string;
   columnName: string;
   referencedTable: string;
   referencedColumn: string;
 }
 
-export interface IndexInfo {
+interface IndexInfo {
   name: string;
   isUnique: boolean;
   columns: string[];

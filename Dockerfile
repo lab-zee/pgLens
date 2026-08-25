@@ -1,7 +1,7 @@
 # ── Build stage ──
-FROM node:22-slim AS build
+FROM node:24.9.0-slim AS build
 
-RUN corepack enable && corepack prepare pnpm@10 --activate
+RUN corepack enable && corepack prepare pnpm@10.26.0 --activate
 
 WORKDIR /app
 
@@ -21,9 +21,9 @@ RUN pnpm --filter @pglens/client run build
 RUN pnpm --filter @pglens/server run build
 
 # ── Production stage ──
-FROM node:22-slim AS production
+FROM node:24.9.0-slim AS production
 
-RUN corepack enable && corepack prepare pnpm@10 --activate
+RUN corepack enable && corepack prepare pnpm@10.26.0 --activate
 
 WORKDIR /app
 

@@ -15,6 +15,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "pnpm -r run typecheck",
+    "knip": "knip",
+    "check": "pnpm lint && pnpm format:check && pnpm typecheck && pnpm knip && pnpm test:coverage && pnpm build",
     "clean": "pnpm -r run clean",
     "start": "pnpm build && node packages/server/dist/index.js"
   },
@@ -30,12 +32,13 @@
   "author": "davidinwald",
   "repository": {
     "type": "git",
-    "url": "https://github.com/davidinwald/pglens"
+    "url": "https://github.com/lab-zee/pgLens"
   },
   "engines": {
     "node": ">=24.0.0",
-    "pnpm": ">=9.0.0"
+    "pnpm": ">=10.0.0"
   },
+  "packageManager": "pnpm@10.26.0",
   "pnpm": {
     "onlyBuiltDependencies": [
       "esbuild",
@@ -43,6 +46,7 @@
     ]
   },
   "devDependencies": {
+    "knip": "^6.32.2",
     "prettier": "^3.8.3"
   }
 }
